@@ -1,25 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+let url =
+  'http://col-development.germanywestcentral.cloudapp.azure.com:7110/api/Registration/trainer'
+
+// eslint-disable-next-line no-unused-vars
+async function sendContactData(contactDetails) {
+  const response = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(contactDetails),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.message || 'Something Went Wrong!')
+  }
 }
 
-export default App;
+const App = () => {
+  const [enteredEmail, setEnteredEmail] = useState('')
+
+  async function sendContactData() {
+    try {
+      await sendContactData({
+        email: enteredEmail,
+      })
+      setEnteredEmail('')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  return (
+    <>
+      <main className="card">
+        <form action="" onSubmit={sendContactData}>
+        <input
+          type="text"
+          placeholder="email@email.com"
+          value={enteredEmail}
+          onChange={(e) => setEnteredEmail(e.target.value)}
+        />
+        <br />
+        <button >Send</button>
+        </form>
+      </main>
+    </>
+  )
+}
+
+export default App
